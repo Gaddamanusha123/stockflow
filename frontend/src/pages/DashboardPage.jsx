@@ -251,10 +251,10 @@ export const DashboardPage = () => {
                     <td className="px-6 py-3.5 font-medium text-slate-900">{prod.name}</td>
                     <td className="px-6 py-3.5 font-mono text-xs text-slate-600">{prod.sku}</td>
                     <td className="px-6 py-3.5 text-right text-xs text-slate-600 font-mono">
-                      ${parseFloat(prod.cost_price).toFixed(2)}
+                      ${(parseFloat(prod.cost_price) || 0).toFixed(2)}
                     </td>
                     <td className="px-6 py-3.5 text-right text-xs text-slate-900 font-mono font-semibold">
-                      ${parseFloat(prod.selling_price).toFixed(2)}
+                      ${(parseFloat(prod.selling_price) || 0).toFixed(2)}
                     </td>
                     <td className="px-6 py-3.5 text-right font-bold text-slate-900">
                       {prod.quantity_on_hand}

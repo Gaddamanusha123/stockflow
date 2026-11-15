@@ -28,7 +28,7 @@ from .permissions import HasOrganizationPermission
 def signup_view(request):
     """
     Registers a new user and automatically creates their tenant organization.
-    Returns the user data and authentication JWT tokens.
+    Returns the user data, organization data, and authentication JWT tokens.
     """
     serializer = SignupSerializer(data=request.data)
     if serializer.is_valid():
@@ -36,17 +36,19 @@ def signup_view(request):
         user = data['user']
         org = data['organization']
         tokens = data['tokens']
+        org_payload = {
+            'id': org.id,
+            'name': org.name,
+            'default_low_stock_threshold': org.default_low_stock_threshold
+        }
         return Response({
             'message': 'Registration successful.',
             'user': {
                 'id': user.id,
                 'email': user.email,
-                'organization': {
-                    'id': org.id,
-                    'name': org.name,
-                    'default_low_stock_threshold': org.default_low_stock_threshold
-                }
+                'organization': org_payload
             },
+            'organization': org_payload,
             'tokens': tokens
         }, status=status.HTTP_201_CREATED)
     return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -65,17 +67,19 @@ def login_view(request):
         user = data['user']
         org = data['organization']
         tokens = data['tokens']
+        org_payload = {
+            'id': org.id,
+            'name': org.name,
+            'default_low_stock_threshold': org.default_low_stock_threshold
+        }
         return Response({
             'message': 'Login successful.',
             'user': {
                 'id': user.id,
                 'email': user.email,
-                'organization': {
-                    'id': org.id,
-                    'name': org.name,
-                    'default_low_stock_threshold': org.default_low_stock_threshold
-                }
+                'organization': org_payload
             },
+            'organization': org_payload,
             'tokens': tokens
         }, status=status.HTTP_200_OK)
     return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

@@ -149,3 +149,4 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Tenant 1: admin@apex.com / ApexPass123!'))
         self.stdout.write(self.style.SUCCESS('Tenant 2: owner@metro.com / MetroPass123!'))
         self.stdout.write(self.style.SUCCESS('--------------------------------------------------'))
+
