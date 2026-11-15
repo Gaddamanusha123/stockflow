@@ -10,6 +10,13 @@
 
 ---
 
+## Project Links
+- **GitHub Repository**: [https://github.com/Gaddamanusha123/stockflow](https://github.com/Gaddamanusha123/stockflow)
+- **Live Deployment (Netlify)**: [https://stockflow-anusha.netlify.app](https://stockflow-anusha.netlify.app)
+- **Backend Local API**: `http://127.0.0.1:8000/api/`
+
+---
+
 ## Table of Contents
 1. [Core Architectural Features](#core-architectural-features)
 2. [Technology Stack](#technology-stack)
