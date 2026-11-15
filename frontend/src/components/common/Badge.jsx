@@ -26,3 +26,4 @@ export const StockBadge = ({ status, quantity }) => {
     </span>
   );
 };
+

@@ -8,6 +8,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Loader2 } from 'lucide-react';
 
 const ProtectedRoute = ({ children }) => {
@@ -45,47 +46,50 @@ const PublicOnlyRoute = ({ children }) => {
 
 export function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          {/* Public Auth Routes */}
-          <Route
-            path="/login"
-            element={
-              <PublicOnlyRoute>
-                <LoginPage />
-              </PublicOnlyRoute>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <PublicOnlyRoute>
-                <SignupPage />
-              </PublicOnlyRoute>
-            }
-          />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            {/* Public Auth Routes */}
+            <Route
+              path="/login"
+              element={
+                <PublicOnlyRoute>
+                  <LoginPage />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicOnlyRoute>
+                  <SignupPage />
+                </PublicOnlyRoute>
+              }
+            />
 
-          {/* Protected Application Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DashboardPage />} />
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
+            {/* Protected Application Routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DashboardPage />} />
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
 
-          {/* 404 Route */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+            {/* 404 Route */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
 export default App;
+

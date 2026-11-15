@@ -109,6 +109,7 @@ class ProductSerializer(serializers.ModelSerializer):
     effective_low_stock_threshold = serializers.IntegerField(read_only=True)
     stock_status = serializers.CharField(read_only=True)
     organization_id = serializers.IntegerField(read_only=True, source='organization.id')
+    last_updated_by_email = serializers.EmailField(source='last_updated_by.email', read_only=True, default='')
 
     class Meta:
         model = Product
@@ -124,10 +125,11 @@ class ProductSerializer(serializers.ModelSerializer):
             'low_stock_threshold',
             'effective_low_stock_threshold',
             'stock_status',
+            'last_updated_by_email',
             'created_at',
             'updated_at',
         ]
-        read_only_fields = ['id', 'organization_id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'organization_id', 'last_updated_by_email', 'created_at', 'updated_at']
 
     def validate_name(self, value):
         cleaned = value.strip()
@@ -185,7 +187,13 @@ class ProductSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         # Enforce organization from authenticated user
         validated_data['organization'] = user.organization
+        validated_data['last_updated_by'] = user
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+        validated_data['last_updated_by'] = user
+        return super().update(instance, validated_data)
 
 
 class StockAdjustmentSerializer(serializers.Serializer):
@@ -219,3 +227,4 @@ class SettingsSerializer(serializers.Serializer):
         instance.default_low_stock_threshold = validated_data['default_low_stock_threshold']
         instance.save(update_fields=['default_low_stock_threshold', 'updated_at'])
         return instance
+

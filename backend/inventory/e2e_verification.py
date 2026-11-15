@@ -24,6 +24,10 @@ def run_all_20_scenarios():
     print(" STOCKFLOW - END-TO-END VERIFICATION: ALL 20 SCENARIOS")
     print("=" * 65)
 
+    # Clean up any prior test users and orgs
+    User.objects.filter(email__in=['admin@alphadist.com', 'admin@omega.com']).delete()
+    Organization.objects.filter(name__in=['Alpha Distribution Inc', 'Omega Retailers Global']).delete()
+
     client = APIClient()
 
     # Scenario 1: Register a new user

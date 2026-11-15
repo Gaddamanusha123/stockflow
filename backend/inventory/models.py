@@ -90,6 +90,13 @@ class Product(models.Model):
         blank=True,
         validators=[MinValueValidator(0)]
     )
+    last_updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='updated_products'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -118,3 +125,4 @@ class Product(models.Model):
         if self.quantity_on_hand <= self.effective_low_stock_threshold:
             return 'LOW_STOCK'
         return 'IN_STOCK'
+

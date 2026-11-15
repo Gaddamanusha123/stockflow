@@ -273,3 +273,4 @@ export const ProductModal = ({ isOpen, onClose, product = null, onSuccess }) => 
     </Modal>
   );
 };
+

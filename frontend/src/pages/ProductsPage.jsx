@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { productsAPI } from '../api/products';
 import { ProductModal } from '../components/products/ProductModal';
 import { StockAdjustModal } from '../components/products/StockAdjustModal';
+import { ProductDetailModal } from '../components/products/ProductDetailModal';
 import { ConfirmationModal } from '../components/common/ConfirmationModal';
 import { StockBadge } from '../components/common/Badge';
 import { TableSkeleton } from '../components/common/LoadingSkeleton';
@@ -12,6 +13,7 @@ import {
   Edit2,
   Trash2,
   Sliders,
+  Eye,
   Package,
   Layers,
   AlertCircle,
@@ -32,6 +34,9 @@ export const ProductsPage = () => {
   // Modals state
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [detailProduct, setDetailProduct] = useState(null);
 
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
   const [adjustingProduct, setAdjustingProduct] = useState(null);
@@ -87,6 +92,27 @@ export const ProductsPage = () => {
   const handleOpenAdjust = (product) => {
     setAdjustingProduct(product);
     setIsAdjustModalOpen(true);
+  };
+
+  // Open View Details modal
+  const handleOpenDetail = (product) => {
+    setDetailProduct(product);
+    setIsDetailModalOpen(true);
+  };
+
+  // Inline one-click adjustment (+1 or -1)
+  const handleInlineDelta = async (product, delta) => {
+    const target = product.quantity_on_hand + delta;
+    if (target < 0) {
+      showToast('Quantity cannot be negative.', 'error');
+      return;
+    }
+    try {
+      const response = await productsAPI.adjustStock(product.id, { adjustment: delta });
+      handleStockSuccess(response.product);
+    } catch (err) {
+      showToast('Failed to adjust quantity.', 'error');
+    }
   };
 
   // Open Delete confirmation
@@ -271,7 +297,13 @@ export const ProductsPage = () => {
                   return (
                     <tr key={product.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-slate-900">{product.name}</div>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDetail(product)}
+                          className="font-semibold text-slate-900 hover:text-emerald-600 text-left transition-colors flex items-center gap-1.5 group"
+                        >
+                          <span>{product.name}</span>
+                        </button>
                         {product.description && (
                           <div className="text-xs text-slate-500 line-clamp-1 max-w-xs mt-0.5">
                             {product.description}
@@ -297,9 +329,18 @@ export const ProductsPage = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleInlineDelta(product, -1)}
+                            disabled={product.quantity_on_hand <= 0}
+                            title="Decrease quantity by 1"
+                            className="w-5 h-5 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold"
+                          >
+                            -
+                          </button>
                           <span
-                            className={`font-bold text-sm ${
+                            className={`font-bold text-sm min-w-[28px] text-center ${
                               product.quantity_on_hand === 0
                                 ? 'text-rose-600'
                                 : product.stock_status === 'LOW_STOCK'
@@ -310,9 +351,17 @@ export const ProductsPage = () => {
                             {product.quantity_on_hand}
                           </span>
                           <button
+                            type="button"
+                            onClick={() => handleInlineDelta(product, 1)}
+                            title="Increase quantity by 1"
+                            className="w-5 h-5 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold"
+                          >
+                            +
+                          </button>
+                          <button
                             onClick={() => handleOpenAdjust(product)}
-                            title="Adjust quantity"
-                            className="p-1 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded transition-colors"
+                            title="Open stock adjustment modal"
+                            className="p-1 ml-0.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded transition-colors"
                           >
                             <Sliders className="w-3.5 h-3.5" />
                           </button>
@@ -322,11 +371,18 @@ export const ProductsPage = () => {
                         <StockBadge status={product.stock_status} quantity={product.quantity_on_hand} />
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => handleOpenDetail(product)}
+                            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                            title="View specifications & details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() => handleOpenAdjust(product)}
-                            className="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors"
-                            title="Adjust stock"
+                            className="px-2 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors"
+                            title="Adjust stock quantity"
                           >
                             Stock
                           </button>
@@ -354,6 +410,17 @@ export const ProductsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Product Detail Modal */}
+      {isDetailModalOpen && (
+        <ProductDetailModal
+          isOpen={isDetailModalOpen}
+          onClose={() => setIsDetailModalOpen(false)}
+          product={detailProduct}
+          onEdit={handleOpenEdit}
+          onAdjustStock={handleOpenAdjust}
+        />
+      )}
 
       {/* Add / Edit Product Modal */}
       {isProductModalOpen && (
@@ -390,3 +457,4 @@ export const ProductsPage = () => {
     </div>
   );
 };
+

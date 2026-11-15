@@ -32,3 +32,4 @@ export const CardSkeleton = () => {
     </div>
   );
 };
+

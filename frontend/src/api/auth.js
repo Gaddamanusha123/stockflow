@@ -21,3 +21,4 @@ export const authAPI = {
     return response.data;
   }
 };
+

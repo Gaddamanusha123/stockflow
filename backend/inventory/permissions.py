@@ -20,3 +20,4 @@ class HasOrganizationPermission(permissions.BasePermission):
         if hasattr(obj, 'organization_id'):
             return obj.organization_id == request.user.organization_id
         return True
+

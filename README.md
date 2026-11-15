@@ -169,12 +169,24 @@ stockflow/
 
 ## 5. Installation & Setup
 
-### Prerequisites
+### Quick Start with Docker (Recommended for Evaluators)
+```bash
+docker compose up --build
+```
+- Frontend: `http://localhost/`
+- Backend API: `http://localhost:8000/api/`
+- PostgreSQL: `localhost:5432`
+
+---
+
+### Manual Setup
+
+#### Prerequisites
 - Python 3.10+
 - Node.js 18+ and npm
 - PostgreSQL (optional for local testing, uses SQLite by default if PostgreSQL env is not set)
 
-### Backend Setup
+#### Backend Setup
 1. Open a terminal and navigate to `backend/`:
    ```bash
    cd backend
@@ -208,8 +220,15 @@ stockflow/
    ```bash
    python manage.py migrate
    ```
+5. *(Optional)* Seed rich demo data for quick evaluation:
+   ```bash
+   python manage.py seed_demo_data
+   ```
+   **Pre-seeded Demo Accounts:**
+   - **Organization 1 (Apex Electronics Hub)**: `admin@apex.com` / `ApexPass123!`
+   - **Organization 2 (Metro Organic Provisions)**: `owner@metro.com` / `MetroPass123!`
 
-### Frontend Setup
+#### Frontend Setup
 1. Navigate to `frontend/`:
    ```bash
    cd ../frontend
@@ -405,3 +424,4 @@ Output:
 
 ## License
 MIT License. Built for commercial SaaS inventory management.
+

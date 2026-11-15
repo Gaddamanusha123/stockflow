@@ -211,3 +211,4 @@ export const StockAdjustModal = ({ isOpen, onClose, product, onSuccess }) => {
     </Modal>
   );
 };
+

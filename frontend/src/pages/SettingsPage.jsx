@@ -186,3 +186,4 @@ export const SettingsPage = () => {
     </div>
   );
 };
+

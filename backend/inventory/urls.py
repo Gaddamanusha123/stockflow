@@ -29,3 +29,4 @@ urlpatterns = [
     # Products router endpoints
     path('', include(router.urls)),
 ]
+

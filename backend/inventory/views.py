@@ -185,7 +185,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
 
         product.quantity_on_hand = target_qty
-        product.save(update_fields=['quantity_on_hand', 'updated_at'])
+        product.last_updated_by = request.user
+        product.save(update_fields=['quantity_on_hand', 'last_updated_by', 'updated_at'])
 
         response_serializer = ProductSerializer(product, context={'request': request})
         return Response(
@@ -298,3 +299,4 @@ def settings_view(request):
                 'settings': OrganizationSerializer(org).data
             }, status=status.HTTP_200_OK)
         return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+

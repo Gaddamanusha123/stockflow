@@ -222,3 +222,4 @@ class StockFlowBackendTests(TestCase):
         # Now Monitor (25 <= 30) also becomes Low Stock!
         dash_res_updated = self.client.get(reverse('dashboard-summary'))
         self.assertEqual(dash_res_updated.data['summary']['low_stock_products_count'], 2)
+
